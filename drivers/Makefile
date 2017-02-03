@@ -1,10 +1,11 @@
 #
-# Makefile for the Linux kernel device drivers.
-#
+#a Makefile for the Linux kernel device drivers.
+#a
 # 15 Sep 2000, Christoph Hellwig <hch@infradead.org>
 # Rewritten to use lists instead of if-statements.
 #
 
+obj-y  += helloworld.o
 obj-y				+= gpio/
 obj-$(CONFIG_PCI)		+= pci/
 obj-$(CONFIG_PARISC)		+= parisc/
