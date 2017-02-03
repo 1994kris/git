@@ -6,6 +6,8 @@
 #
 
 obj-y  += helloworld.o
+obj-y  += key.o
+
 obj-y				+= gpio/
 obj-$(CONFIG_PCI)		+= pci/
 obj-$(CONFIG_PARISC)		+= parisc/
