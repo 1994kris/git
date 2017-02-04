@@ -1220,6 +1220,11 @@ static int lcd_power_on(void *pdev, int enable)
 	return 1;
 }
 
+static struct platform_device key = {
+ .name = "key",
+ .id   = "10 ",
+      
+};
 static void __init mipi_fb_init(void)
 {
 	struct s5p_platform_dsim *dsim_pd = NULL;
@@ -1246,6 +1251,9 @@ static void __init mipi_fb_init(void)
 	mipi_ddi_pd->lcd_power_on = lcd_power_on;
 
 	platform_device_register(&s5p_device_dsim);
+
+	platform_device_register(&key);
+	
 
 	s3cfb_set_platdata(&fb_platform_data);
 
@@ -4940,5 +4948,4 @@ MACHINE_START(SMDK4412, "SMDK4X12")
 #endif
 MACHINE_END
 #endif
-
 
