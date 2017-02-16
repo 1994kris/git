@@ -1,5 +1,5 @@
 #!/bin/bash
-obj-m += request_cdev_num.o
+obj-m += register_cdev.o
 KDIR := /home/d/Android4.0/iTop4412_Kernel_3.0
 PWD ?= $(shell pwd)
 all:
