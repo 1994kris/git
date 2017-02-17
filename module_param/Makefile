@@ -1,5 +1,5 @@
 #!/bin/bash
-obj-m += create_cnode.o
+obj-m += char_driver.o
 KDIR := /home/d/Android4.0/iTop4412_Kernel_3.0
 PWD ?= $(shell pwd)
 all:
