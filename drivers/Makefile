@@ -5,9 +5,12 @@
 # Rewritten to use lists instead of if-statements.
 #
 #obj-y  += led_drv.o
-obj-y  += helloworld.o
-obj-y  += key.o
-
+#obj-y  += helloworld.o
+#obj-y  += key.o
+obj-y  += first_led_device.o
+#obj-y  += first_led1_driver.o
+#obj-y  += led_drv.o
+#obj-y  += led_dev.o
 obj-y				+= gpio/
 obj-$(CONFIG_PCI)		+= pci/
 obj-$(CONFIG_PARISC)		+= parisc/
@@ -130,3 +133,5 @@ obj-$(CONFIG_HWSPINLOCK)	+= hwspinlock/
 obj-$(CONFIG_MTK_COMBO)         += mtk_wcn_combo/
 #obj-y				+= topeet/
 #end add
+
+obj-y  += first_led_driver.o
