@@ -14,23 +14,38 @@
 #include <linux/irq.h>
 #include <asm/uaccess.h>
 #include <asm/io.h>
-  #include <linux/module.h>
-  #include <linux/version.h>
-  
-  #include <linux/init.h>
-  
-  #include <linux/kernel.h>
-  #include <linux/types.h>
-  #include <linux/interrupt.h>
-  #include <linux/list.h>
-  #include <linux/timer.h>
-  #include <linux/init.h>
-  #include <linux/serial_core.h>
-  #include <linux/platform_device.h>  
+#include <linux/module.h>
+#include <linux/version.h>
+#include <linux/types.h>
+#include <linux/interrupt.h>
+#include <linux/list.h>
+#include <linux/timer.h>
+#include <linux/init.h>
+#include <linux/serial_core.h>
+#include <linux/platform_device.h>  
+#include <plat/gpio-cfg.h>
+#include <mach/gpio-exynos4.h>
+#include <linux/errno.h>
+int gpio_direction_input(unsigned gpio);
+int gpio_direction_output(unsigned gpio, int value);
+int gpio_request(unsigned gpio, const char *label);
+void gpio_free(unsigned gpio);
+int gpio_get_value(unsigned gpio);
+void gpio_set_value(unsigned gpio, int value);
+int gpio_to_irq(unsigned gpio);
+int irq_to_gpio(unsigned irq);
+int err;
 static int led_probe(struct platform_device *pdev)
 {
-	printk(KERN_ERR "asdasdwfirst_led_probe" );
-	return 0;
+		if(gpio_request(EXYNOS4_GPK1(1), "GPK1_0"))
+		{
+		printk(KERN_ERR "failed to request GPK1_1 for "
+		"USI control\n");
+		return err;
+		}
+		gpio_direction_output(EXYNOS4_GPK1(1), 0);
+		s3c_gpio_cfgpin(EXYNOS4_GPK1(1), S3C_GPIO_OUTPUT);
+	//	gpio_free(EXYNOS4_GPK1(1));
 }
 static int led_remove(struct platform_device *pdev)
 {
@@ -58,6 +73,7 @@ static void led_driver_exit(void)
 {
 		platform_driver_unregister(&led_drv);
 
-}module_init(led_driver_init);
+}
+module_init(led_driver_init);
 module_exit(led_driver_exit);
 MODULE_LICENSE("GPL");
