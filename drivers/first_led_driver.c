@@ -35,6 +35,17 @@ void gpio_set_value(unsigned gpio, int value);
 int gpio_to_irq(unsigned gpio);
 int irq_to_gpio(unsigned irq);
 int err;
+int ret;
+			static irqreturn_t SLK_irq(int irq, void *dev_id)
+					{
+			printk("%s(%d)\n", __FUNCTION__, __LINE__);
+			if(gpio_get_value(EXYNOS4_GPX1(1)))
+			gpio_set_value(EXYNOS4_GPX1(1), 0);
+			else
+			gpio_set_value((EXYNOS4_GPX1(1)), 1);
+			return IRQ_HANDLED;
+					}
+				
 static int led_probe(struct platform_device *pdev)
 {
 		if(gpio_request(EXYNOS4_GPK1(1), "GPK1_0"))
@@ -46,6 +57,28 @@ static int led_probe(struct platform_device *pdev)
 		gpio_direction_output(EXYNOS4_GPK1(1), 0);
 		s3c_gpio_cfgpin(EXYNOS4_GPK1(1), S3C_GPIO_OUTPUT);
 	//	gpio_free(EXYNOS4_GPK1(1));
+	
+			err = gpio_request(EXYNOS4_GPX1(1),  "EXYNOS4_GPX1(1)");
+			if (err) {
+			printk(KERN_ERR "failed to request EXYNOS4_GPX1(1)\n");
+			return -1;
+			}
+			s3c_gpio_cfgpin(EXYNOS4_GPX1(1), S3C_GPIO_SFN(0xf));
+			s3c_gpio_setpull(EXYNOS4_GPX1(1), S3C_GPIO_PULL_NONE);
+			gpio_free(EXYNOS4_GPX1(1));
+
+				
+			ret = request_irq(IRQ_EINT(10), SLK_irq,
+			IRQ_TYPE_EDGE_FALLING /*IRQF_TRIGGER_FALLING*/, "eint10", pdev);
+			if (ret < 0) 
+			{
+			printk("Request IRQ %d failed, %d\n", IRQ_EINT(10), ret);
+			goto exit;
+			}
+
+
+	exit:
+	return ret;
 }
 static int led_remove(struct platform_device *pdev)
 {
