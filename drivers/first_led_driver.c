@@ -40,11 +40,18 @@ int ret;
 					{
 			printk("%s(%d)\n", __FUNCTION__, __LINE__);
 			if(gpio_get_value(EXYNOS4_GPX1(1)))
+{				
 			gpio_set_value(EXYNOS4_GPX1(1), 0);
-			else
-			gpio_set_value((EXYNOS4_GPX1(1)), 1);
-			return IRQ_HANDLED;
-					}
+}			else
+{			gpio_set_value(EXYNOS4_GPX1(1), 1);
+}			
+
+			if(gpio_get_value(EXYNOS4_GPK1(1)))
+			
+			gpio_set_value(EXYNOS4_GPK1(1), 0);
+		else
+			gpio_set_value(EXYNOS4_GPK1(1), 1);
+	return 		IRQ_HANDLED;		}
 				
 static int led_probe(struct platform_device *pdev)
 {
@@ -54,9 +61,9 @@ static int led_probe(struct platform_device *pdev)
 		"USI control\n");
 		return err;
 		}
-		gpio_direction_output(EXYNOS4_GPK1(1), 0);
+		gpio_direction_output(EXYNOS4_GPK1(1), 1);
 		s3c_gpio_cfgpin(EXYNOS4_GPK1(1), S3C_GPIO_OUTPUT);
-	//	gpio_free(EXYNOS4_GPK1(1));
+		gpio_free(EXYNOS4_GPK1(1));
 	
 			err = gpio_request(EXYNOS4_GPX1(1),  "EXYNOS4_GPX1(1)");
 			if (err) {
@@ -69,7 +76,7 @@ static int led_probe(struct platform_device *pdev)
 
 				
 			ret = request_irq(IRQ_EINT(10), SLK_irq,
-			IRQ_TYPE_EDGE_FALLING /*IRQF_TRIGGER_FALLING*/, "eint10", pdev);
+			IRQ_TYPE_EDGE_BOTH /*IRQF_TRIGGER_FALLING*/, "eint10", pdev);
 			if (ret < 0) 
 			{
 			printk("Request IRQ %d failed, %d\n", IRQ_EINT(10), ret);
