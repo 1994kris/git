@@ -26,11 +26,7 @@
 extern int gpio_direction_input(unsigned gpio);
 extern int gpio_direction_output(unsigned gpio,int value);
 extern int gpio_request(unsigned gpio,const char *label);
-void gpio_free(unsigned gpio);
-int gpio_get_value(unsigned gpio);
 extern void gpio_set_value(unsigned gpio,int value);
-int gpio_to_irq(unsigned gpio);
-int irq_to_gpio(unsigned irq);
 int err;
 int ret;
 struct timer_list timer1;
