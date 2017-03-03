@@ -27,25 +27,39 @@ extern int gpio_direction_input(unsigned gpio);
 extern int gpio_direction_output(unsigned gpio,int value);
 extern int gpio_request(unsigned gpio,const char *label);
 extern void gpio_set_value(unsigned gpio,int value);
+extern int gpio_get_value(int value);
 int err;
 int ret;
 struct timer_list timer1;
 #define KEY_GPIO  EXYNOS4_GPX1(1)
 #define LED_GPIO  EXYNOS4_GPK1(1)
-	static void on_led()
+#define LCD_GPIO  EXYNOS4_GPL1(0)
+static struct input_dev *key_dev;
+	/*	static void on_led()
 	{	
 		gpio_set_value(LED_GPIO,0);
 		
 	} 
-	static irqreturn_t SLK_irq(int irq, void *dev_id)
+	*/
+	
+/*	static irqreturn_t SLK_irq(int irq, void *dev_id)
 	{	
 		gpio_set_value(LED_GPIO,1);
 		mod_timer(&timer1,jiffies+HZ);
 		printk(KERN_ERR"jiffies:::%ld\n",jiffies+HZ);
 		return IRQ_HANDLED;		
 	}
-
-	static void my_timer()
+*/
+	static irqreturn_t LCD_irq(int irq, void * dev_id)
+		{
+		printk("aaa");
+		input_report_key(key_dev, KEY_VOLUMEDOWN,1);
+		input_sync(key_dev);
+		input_report_key(key_dev,KEY_VOLUMEDOWN,0);
+		input_sync(key_dev);
+		return IRQ_HANDLED;
+		}
+/*	static void my_timer()
 	
 	{
 		
@@ -53,8 +67,8 @@ struct timer_list timer1;
 		init_timer(&timer1);
 		timer1.expires = jiffies+(HZ);
 	}		
-
-static void key_gpio_init()
+*/
+/*static void key_gpio_init()
 {
 	
 		err = gpio_request(EXYNOS4_GPX1(1),  "key_gpio");
@@ -68,8 +82,8 @@ static void key_gpio_init()
 		s3c_gpio_cfgpin(EXYNOS4_GPX1(1), S3C_GPIO_INPUT);
 		s3c_gpio_setpull(EXYNOS4_GPX1(1), S3C_GPIO_PULL_UP);
 				
-}
-static void led_gpio_init()
+}*/
+/*static void led_gpio_init()
 {
 
 		if(gpio_request(EXYNOS4_GPK1(1), "led_gpio"))
@@ -83,19 +97,50 @@ static void led_gpio_init()
 	//	gpio_free(EXYNOS4_GPK1(1));
 }
 
+*/
+/*static void lcd_pwdn_init()
+{
+	err = gpio_request(EXYNOS4_GPL1(0), "GPL1_0");
+	if (err) {
+	printk(KERN_ERR "failed to request GPL1 for "
+			"lcd power control\n");
+		return err;
+	}
+	gpio_direction_output(EXYNOS4_GPL1(0), 0);
+
+	s3c_gpio_cfgpin(EXYNOS4_GPL1(0), S3C_GPIO_OUTPUT);
+
+	printk("(%s, %d): LCD_PWDN ON\n", __FUNCTION__, __LINE__);
+}*/
+
 static int led_probe(struct platform_device *pdev)
 {
 			
-	  		my_timer();
-			led_gpio_init();
-			key_gpio_init();
-			ret = request_irq(IRQ_EINT(10), SLK_irq,
+	  	//	my_timer();
+		//	led_gpio_init();
+		//	key_gpio_init();
+			key_dev = input_allocate_device();
+			key_dev->name="power_key";
+			set_bit(EV_KEY,key_dev->evbit);
+			set_bit(KEY_VOLUMEDOWN,key_dev->keybit);
+					
+			input_register_device(key_dev);
+
+			ret = request_irq(IRQ_EINT(10), LCD_irq,
 			IRQ_TYPE_EDGE_FALLING /*IRQF_TRIGGER_FALLING*/, "eint10", NULL);
 			if (ret < 0) 
 			{
 			printk("Request IRQ %d failed, %d\n", IRQ_EINT(10), ret);
 			goto exit;
 			}
+
+	//		ret = request_irq(IRQ_EINT(9), LCD_irq,
+	//		IRQ_TYPE_EDGE_FALLING /*IRQF_TRIGGER_FALLING*/, "eint9", NULL);
+	//		if (ret < 0) 
+	//		{
+	//		printk("Request IRQ %d failed, %d\n", IRQ_EINT(9), ret);
+	//		goto exit;
+	//	}
 
 			exit:
 			return ret;
