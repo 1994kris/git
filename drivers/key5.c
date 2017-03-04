@@ -38,7 +38,7 @@ static struct input_dev *key_dev;
 
 	static irqreturn_t voldown_irq(int irq, void * dev_id)
 		{
-		printk("aaa");
+		printk(KERN_ERR"vol-");
 		input_report_key(key_dev, KEY_VOLUMEDOWN,1);
 		input_sync(key_dev);
 		input_report_key(key_dev,KEY_VOLUMEDOWN,0);
@@ -47,10 +47,37 @@ static struct input_dev *key_dev;
 		}
 	static irqreturn_t volup_irq(int irq, void * dev_id)
 		{
-		printk("aaa");
+		printk(KERN_ERR"vol+");
 		input_report_key(key_dev, KEY_VOLUMEUP,1);
 		input_sync(key_dev);
 		input_report_key(key_dev, KEY_VOLUMEUP,0);
+		input_sync(key_dev);
+		return IRQ_HANDLED;
+		}
+	static irqreturn_t back_irq(int irq, void * dev_id)
+		{
+		printk(KERN_ERR"back");
+		input_report_key(key_dev, KEY_BACK,1);
+		input_sync(key_dev);
+		input_report_key(key_dev, KEY_BACK,0);
+		input_sync(key_dev);
+		return IRQ_HANDLED;
+		}
+	static irqreturn_t power_irq(int irq, void * dev_id)
+		{
+		printk(KERN_ERR"power");
+		input_report_key(key_dev, KEY_POWER,1);
+		input_sync(key_dev);
+		input_report_key(key_dev, KEY_POWER,0);
+		input_sync(key_dev);
+		return IRQ_HANDLED;
+		}
+	static irqreturn_t menu_irq(int irq, void * dev_id)
+		{
+		printk(KERN_ERR"menu");
+		input_report_key(key_dev, KEY_MENU,1);
+		input_sync(key_dev);
+		input_report_key(key_dev, KEY_MENU,0);
 		input_sync(key_dev);
 		return IRQ_HANDLED;
 		}
@@ -64,6 +91,10 @@ static int led_probe(struct platform_device *pdev)
 			set_bit(KEY_VOLUMEDOWN,key_dev->keybit);
 					
 			set_bit(KEY_VOLUMEUP,key_dev->keybit);
+			set_bit(KEY_MENU,key_dev->keybit);
+			set_bit(KEY_POWER,key_dev->keybit);
+			
+			set_bit(KEY_BACK,key_dev->keybit);
 			input_register_device(key_dev);
 
 			ret = request_irq(IRQ_EINT(10), voldown_irq,
@@ -74,7 +105,7 @@ static int led_probe(struct platform_device *pdev)
 			goto exit;
 			}
 
-			
+					
 			ret = request_irq(IRQ_EINT(27), volup_irq,
 			IRQ_TYPE_EDGE_FALLING /*IRQF_TRIGGER_FALLING*/, "eint27", NULL);
 			if (ret < 0) 
@@ -83,6 +114,29 @@ static int led_probe(struct platform_device *pdev)
 			goto exit;
 			}
 			
+			ret = request_irq(IRQ_EINT(9), back_irq,
+			IRQ_TYPE_EDGE_FALLING /*IRQF_TRIGGER_FALLING*/, "eint9", NULL);
+			if (ret < 0) 
+			{
+			printk("Request IRQ %d failed, %d\n", IRQ_EINT(9), ret);
+			goto exit;
+			}
+
+			ret = request_irq(IRQ_EINT(17), power_irq,
+			IRQ_TYPE_EDGE_FALLING /*IRQF_TRIGGER_FALLING*/, "eint17", NULL);
+			if (ret < 0) 
+			{
+			printk("Request IRQ %d failed, %d\n", IRQ_EINT(17), ret);
+			goto exit;
+			}
+
+			ret = request_irq(IRQ_EINT(16), menu_irq,
+			IRQ_TYPE_EDGE_FALLING /*IRQF_TRIGGER_FALLING*/, "eint16", NULL);
+			if (ret < 0) 
+			{
+			printk("Request IRQ %d failed, %d\n", IRQ_EINT(16), ret);
+			goto exit;
+			}
 
 			exit:
 			return ret;
