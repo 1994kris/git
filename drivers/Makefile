@@ -9,10 +9,15 @@
 #obj-y  += led_drv.o
 #obj-y  += helloworld.o
 #obj-y  += key.o
-obj-y  += first_led_device.o
+#obj-y  += first_led_device.o
+obj-y   += 5keyokdev.o
+#obj-y 	+= platformdriver.o
+#obj-y 	+= keyok.o
 #obj-y  	+= jkeys.o
 #obj-y  	+= key5.o 
-obj-y 		+= key3.o
+#obj-y 		+= key3.o
+#obj-y           += key001.o
+obj-y 		+= myporc.o
 #obj-y  += first_led1_driver.o
 #obj-y  += led_drv.o
 #obj-y  += led_dev.o
