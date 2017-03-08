@@ -22,15 +22,15 @@ static struct resource dev_irq_gpio_resource[] =
 	.start  = EXYNOS4_GPX1(1),
 	.end   =  EXYNOS4_GPX1(1),
 	.flags = IORESOURCE_IO,
-	}
-	[1]={
-	.start  = EXYNOS4_GPX1(0),
-	.end    = EXYNOS4_GPX1(0),
-	.flags  = IORESOURCE_IO,
 	},
 	[2]={
-	.start  = EXYNOS4_GPX1(0),
-	.end    = EXYNOS4_GPX1(0),
+	.start  = EXYNOS4_GPL2(0),
+	.end    = EXYNOS4_GPL2(0),
+	.flags  = IORESOURCE_IO,
+	},
+	[1]={
+	.start  = EXYNOS4_GPK1(1),
+	.end    = EXYNOS4_GPK1(1),
 	.flags  = IORESOURCE_IO,
 	}
 };
