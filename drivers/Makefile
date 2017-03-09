@@ -11,7 +11,8 @@
 #obj-y  += key.o
 #obj-y  += first_led_device.o
 obj-y   += 5keyokdev.o
-obj-y	+= testkey2.o
+#obj-y	+= testkey2.o
+obj-y	+= testresume.o
 #obj-y	+= first_led_driver.o
 #obj-y	+= platformdriver.o
 #obj-y 	+= platformdriver.o
