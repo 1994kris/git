@@ -109,7 +109,7 @@ void work_func(struct work_struct *work)
 	static struct proc_dir_entry *debug_entry;  
 	static struct proc_dir_entry *pt_entry1;
 	static struct proc_dir_entry *pt_root;
-	#define USER_ROOT_DIR "tp_debug"  
+	#define USER_ROOT_DIR "my_led_debug"  
 	#define USER_ENTRY1   "debug_switch"
 	static int my_switch_writeproc(struct file *file,const char *buffer,unsigned long count,void *data)
 {
@@ -172,7 +172,6 @@ printk(KERN_ERR"my suspend");
 
 	return 0;
 }
- static int my_resume(struct early_suspend * handler);
  static int my_resume(struct early_suspend * handler)
  {
 
