@@ -43,23 +43,35 @@ static unsigned long led1_gpio;
 static unsigned long led2_gpio;
 void register_early_suspend(struct early_suspend *handler);
 
-static struct workqueue_struct *mywq;
+
+struct driver_str
+{
+
+struct proc_dir_entry *pt_root;
+struct proc_dir_entry *pt_entry1;
+struct proc_dir_entry *debug_entry;  
+struct proc_dir_entry *tp_root;  
+struct early_suspend early_suspend;
+struct workqueue_struct *mywq;
 struct work_struct my_work;
-static struct input_dev *key_dev;
-void work_func(struct work_struct *work);
+struct input_dev *key_dev;
+};
+
+static struct driver_str *l;
 void work_func(struct work_struct *work)
 {
+			
 		printk(KERN_ERR"jiadayin");
-		input_report_key(key_dev, KEY_POWER,1);
-		input_sync(key_dev);
+		input_report_key(l->key_dev, KEY_POWER,1);
+		input_sync(l->key_dev);
 //		msleep(2000);
-		input_report_key(key_dev, KEY_POWER,0);
-		input_sync(key_dev);
+		input_report_key(l->key_dev, KEY_POWER,0);
+		input_sync(l->key_dev);
 }
 	static irqreturn_t power_irq(int irq, void * dev_id)
 		{
 	printk(KERN_ERR"power");
-	queue_work(mywq,&my_work);
+	queue_work(l->mywq,&l->my_work);
 		return IRQ_HANDLED;
 		}
 	static void gpiokey()
@@ -98,17 +110,12 @@ void work_func(struct work_struct *work)
 	}
 	static void input_dev_init()
 	{
-		
-			key_dev = input_allocate_device();
-			key_dev->name="power_key";
-			set_bit(EV_KEY,key_dev->evbit);
-			set_bit(KEY_POWER,key_dev->keybit);
-			input_register_device(key_dev);
+			l->key_dev = input_allocate_device();
+			l->key_dev->name="power_key";
+			set_bit(EV_KEY,l->key_dev->evbit);
+			set_bit(KEY_POWER,l->key_dev->keybit);
+			input_register_device(l->key_dev);
 	}
-	static struct proc_dir_entry *tp_root;  
-	static struct proc_dir_entry *debug_entry;  
-	static struct proc_dir_entry *pt_entry1;
-	static struct proc_dir_entry *pt_root;
 	#define USER_ROOT_DIR "my_led_debug"  
 	#define USER_ENTRY1   "debug_switch"
 	static int my_switch_writeproc(struct file *file,const char *buffer,unsigned long count,void *data)
@@ -147,24 +154,23 @@ return 2;
 }
 	static int init_debug_port(void)
 {
-		pt_entry1 =create_proc_entry(USER_ENTRY1, 0666, NULL); 
-       	 if (NULL ==pt_entry1) 
+		l->pt_entry1 =create_proc_entry(USER_ENTRY1, 0666, NULL); 
+       	 if (NULL ==l->pt_entry1) 
       	  { 
                 printk(KERN_ALERT"MY Create entry %s under /proc/%s error!\n", 
                                             USER_ENTRY1,USER_ROOT_DIR); 
                 goto err_out; 
          }
-		pt_entry1->write_proc=my_switch_writeproc;
-		pt_entry1->read_proc=my_switch_readproc;
+		l->pt_entry1->write_proc=my_switch_writeproc;
+		l->pt_entry1->read_proc=my_switch_readproc;
 		printk(KERN_INFO"MY1 Create /proc/%s/%s/%s\n",USER_ROOT_DIR,USER_ENTRY1);
 		return 0;
 		err_out: 
-      	 	 pt_entry1->read_proc =NULL; 
-       	  	pt_entry1->write_proc= NULL;
-         		remove_proc_entry(USER_ROOT_DIR,pt_root); 
+      	 	 l->pt_entry1->read_proc =NULL; 
+       	  	l->pt_entry1->write_proc= NULL;
+         		remove_proc_entry(USER_ROOT_DIR,l->pt_root); 
       		   return -1;
 }
-struct early_suspend early_suspend;
 static void my_suspend(struct early_suspend * handler)
 {
 gpio_direction_output(led1_gpio,1);
@@ -183,14 +189,14 @@ printk(KERN_ERR"my suspend");
 static int led_probe(struct platform_device *pdev)
 {
 	
-early_suspend.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN;		
-early_suspend.suspend = my_suspend;
-early_suspend.resume = my_resume;
-register_early_suspend(&early_suspend);
+l->early_suspend.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN;		
+l->early_suspend.suspend = my_suspend;
+l->early_suspend.resume = my_resume;
+register_early_suspend(&l->early_suspend);
 			init_debug_port();
-			mywq= create_workqueue("mywq");
+			l->mywq= create_workqueue("mywq");
 			struct resource *res;
-			INIT_WORK(&my_work,work_func);
+			INIT_WORK(&l->my_work,work_func);
 			gpiokey();
 			input_dev_init();
 			res=platform_get_resource(pdev,IORESOURCE_IO,1);
