@@ -4,15 +4,17 @@
 # 15 Sep 2000, Christoph Hellwig <hch@infradead.org>
 # Rewritten to use lists instead of if-statements.
 #
+#obj-y	+= Newdev.o
+obj-y 	+= Newdrv.o
 #obj-y   += jk_driver.o
 #obj-y   += jk_device.o
 #obj-y  += led_drv.o
 #obj-y  += helloworld.o
 #obj-y  += key.o
 #obj-y  += first_led_device.o
-obj-y   += 5keyokdev.o
+#obj-y   += 5keyokdev.o
 #obj-y	+= testkey2.o
-obj-y	+= testresume.o
+#obj-y	+= testresume.o
 #obj-y	+= first_led_driver.o
 #obj-y	+= platformdriver.o
 #obj-y 	+= platformdriver.o

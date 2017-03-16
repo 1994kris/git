@@ -1929,6 +1929,15 @@ static struct i2c_board_info i2c_devs0[] __initdata = {
 #endif
 };
 
+static struct i2c_board_info i2c_devs8[] __initdata = {
+	
+	
+	{
+
+		I2C_BOARD_INFO("bh1750", (0x74 >> 1)),    
+},
+};
+
 static struct i2c_board_info i2c_devs1[] __initdata = {
 	{
 #ifdef CONFIG_REGULATOR_S5M8767
@@ -2262,9 +2271,6 @@ struct platform_device s5p_device_pmic = {
   .id               = -1,
   .num_resources    = ARRAY_SIZE(s5p_pmic_resource),
   .resource         = s5p_pmic_resource,
-
-
-  
 };
 
 EXPORT_SYMBOL(s5p_device_pmic);
@@ -2657,7 +2663,14 @@ struct platform_device s3c_device_leds_ctl = {
         .id             = -1,
 };
 #endif
+#ifdef CONFIG_HELLO_CTL
+struct platform_device s3c_device_hello_ctl = {
+	.name	= "hello_ctl",
+	
+	.id		= -1,
+};
 
+#endif
 #ifdef CONFIG_BUZZER_CTL
 struct platform_device s3c_device_buzzer_ctl = {
         .name   = "buzzer_ctl",
@@ -2988,7 +3001,9 @@ static struct platform_device *smdk4x12_devices[] __initdata = {
 #ifdef CONFIG_LEDS_CTL
 	&s3c_device_leds_ctl,
 #endif
-
+#ifdef CONFIG_HELLO_CTL
+	&s3c_device_hello_ctl,
+#endif
 #ifdef CONFIG_BUZZER_CTL
 	&s3c_device_buzzer_ctl,
 #endif
@@ -4472,7 +4487,9 @@ static void __init smdk4x12_machine_init(void)
 	s3c_i2c7_set_platdata(NULL);
 	i2c_register_board_info(7, i2c_devs7, ARRAY_SIZE(i2c_devs7));
 
-
+	
+	s3c_i2c7_set_platdata(NULL);
+	i2c_register_board_info(7, i2c_devs8, ARRAY_SIZE(i2c_devs8));
 #ifdef CONFIG_ANDROID_PMEM
 	android_pmem_set_platdata();
 #endif
